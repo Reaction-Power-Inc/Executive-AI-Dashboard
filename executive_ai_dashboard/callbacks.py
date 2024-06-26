@@ -41,7 +41,7 @@ def update_engagements(start_date, end_date):
     return [
         'Engagements ',
         html.Br(),
-        html.B(f"{total_engagements:,.0f}", className='overview-count'),
+        html.B(f"{total_engagements:,.0f}", className='metric-value'),
         html.Br(),
         html.P(change_text, className=f'percentage-change {change_class}')
     ]
@@ -73,7 +73,7 @@ def update_impressions(start_date, end_date):
     return [
         'Impressions ',
         html.Br(),
-        html.B(f"{total_impressions:,.0f}", className='overview-count'),
+        html.B(f"{total_impressions:,.0f}", className='metric-value'),
         html.Br(),
         html.P(change_text, className=f'percentage-change {change_class}')
     ]
@@ -83,7 +83,7 @@ def update_engagements_rate(start_date, end_date):
     total_impressions = filtered_impressions['Impressions'].sum()
     total_engagements = filtered_impressions['Engagements'].sum()
     engagement_rate = (total_engagements / total_impressions)*100
-    return ['Engagement Rate', html.Br(), html.B("{:,.2f}%".format(engagement_rate), className='overview-count')]
+    return ['Engagement Rate', html.Br(), html.B("{:,.2f}%".format(engagement_rate), className='metric-value')]
 
  
 def update_emv(start_date, end_date):
@@ -92,10 +92,10 @@ def update_emv(start_date, end_date):
     total_engagements = filtered_impressions['Engagements'].sum()
     engagement_rate = total_engagements / total_impressions
     emv = engagement_rate*total_impressions*6.59
-    return ['Earned Media Value', html.Br(), html.B("${:,.0f}".format(emv),className='overview-count')]
+    return ['Earned Media Value', html.Br(), html.B("${:,.0f}".format(emv),className='metric-value')]
 
 def update_audience_graph(selected_variable):
-    fig = px.bar(demographics[demographics['Top Demographics'] == selected_variable], x='Percentage', y='Value', orientation='h', title=f'Top audience by {selected_variable}', labels={'Percentage': 'Percentage (%)', 'Value': 'Top Values'},color_discrete_sequence=['#b51a00']).update_layout(plot_bgcolor='white')
+    fig = px.bar(demographics[demographics['Top Demographics'] == selected_variable], x='Percentage', y='Value', orientation='h', title=f'Top audience by {selected_variable}', labels={'Percentage': 'Percentage (%)', 'Value': 'Top Values'},color_discrete_sequence=['#b51a00']).update_layout(plot_bgcolor='white', paper_bgcolor='white')
     return fig
 
 def update_engagements_graph(start_date, end_date, selected_variable):
@@ -112,17 +112,17 @@ def update_optimal_graph(start_date, end_date, selected_variable):
     if selected_variable == 'Engagements':
         engagements_by_day = engagements_by_day.sort_values(by='Engagements', ascending=False).reset_index(drop=True)
         optimal_day = engagements_by_day.loc[0, 'DayOfWeek']
-        fig = px.pie(engagements_by_day, names='DayOfWeek', values=selected_variable, color_discrete_sequence=['#b51a00']).update_layout(plot_bgcolor='white')
+        fig = px.pie(engagements_by_day, names='DayOfWeek', values=selected_variable, color_discrete_sequence=['#b51a00']).update_layout(paper_bgcolor='#F3F6F8', plot_bgcolor='#F3F6F8')
         return (fig, f"Engagement", ["With a total of ", html.B(engagements_by_day.loc[0, 'Engagements']), " reactions, the best day to post on LinkedIn to maximize your engagement is ", html.B(optimal_day), ". The second best day is ", html.B(engagements_by_day.loc[1, 'DayOfWeek'])])
     elif selected_variable == 'Impressions':
         engagements_by_day = engagements_by_day.sort_values(by='Impressions', ascending=False).reset_index(drop=True)
         optimal_day = engagements_by_day.loc[0, 'DayOfWeek']
-        fig = px.histogram(engagements_by_day, x='DayOfWeek', y=selected_variable, color_discrete_sequence=['#b51a00']).update_layout(plot_bgcolor='white')
+        fig = px.pie(engagements_by_day, names='DayOfWeek', values=selected_variable, color_discrete_sequence=['#b51a00']).update_layout(paper_bgcolor='#F3F6F8', plot_bgcolor='#F3F6F8')
         return (fig, f"Reach", ["The best day to maximize the reach of your LinkedIn posts is ", html.B(optimal_day), " with total of ", html.B(engagements_by_day.loc[0, 'Impressions']), " impressions. The second best day is", html.B(engagements_by_day.loc[1, 'DayOfWeek']), "."])
     else:
         engagements_by_day = engagements_by_day.sort_values(by='EngagementRate', ascending=False).reset_index(drop=True)
         optimal_day = engagements_by_day.loc[0, 'DayOfWeek']
-        fig = px.histogram(engagements_by_day, x='DayOfWeek', y=selected_variable, color_discrete_sequence=['#b51a00']).update_layout(plot_bgcolor='white')
+        fig = px.pie(engagements_by_day, names='DayOfWeek', values=selected_variable, color_discrete_sequence=['#b51a00']).update_layout(paper_bgcolor='#F3F6F8', plot_bgcolor='#F3F6F8')
         return (fig, f"Engagement rate", [ "Increase your engagement rate on your LinkedIn posts by posting on ", html.B(optimal_day), " with (", html.B(engagements_by_day.loc[0, 'EngagementRate']), "%) engagement rate."])
 
 
