@@ -18,7 +18,7 @@ top_posts_preview_with_topics = process_data.preprocess_topposts(top_posts_raw)
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap'])
 app.title = 'LinkedIn Analytics Dashboard'
-server = app.server
+
 # Define color scheme
 colors = {
     'primary': '#0077B5',  # LinkedIn blue
