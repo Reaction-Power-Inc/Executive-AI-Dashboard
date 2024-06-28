@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 client = OpenAI(api_key="")
 
-def read_data(file_path='../executive_ai_dashboard/data/linkedin.xlsx'):
+def read_data(file_path='data/linkedin.xlsx'):
     """
     Reads data from an Excel file and returns dataframes for engagements,
     demographics, followers, and top posts.
@@ -165,7 +165,7 @@ def suggest_topics(top_posts_preview):
         top_posts_preview.at[index, 'Topics'] = response
     return top_posts_preview
 
-def preprocess_topposts(top_posts,  csv_path='../executive_ai_dashboard/data/top_posts_with_topics.csv'):
+def preprocess_topposts(top_posts,  csv_path='data/top_posts_with_topics.csv'):
     """
     Preprocesses the top posts  data.
     
