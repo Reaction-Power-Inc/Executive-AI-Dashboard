@@ -18,3 +18,4 @@ cmdstanpy==1.1.0
 dash
 dash_bootstrap_components
 openpyxl
+gunicorn
