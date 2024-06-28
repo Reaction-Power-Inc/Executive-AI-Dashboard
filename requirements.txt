@@ -19,3 +19,4 @@ dash
 dash_bootstrap_components
 openpyxl
 gunicorn
+bs4
