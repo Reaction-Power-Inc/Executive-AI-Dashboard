@@ -15,6 +15,11 @@ from nltk.util import ngrams
 from collections import Counter
 import re
 import warnings
+
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    nltk.download('stopwords', quiet=True)
 warnings.filterwarnings('ignore')
 
 STOPWORDS = set(stopwords.words('english'))
