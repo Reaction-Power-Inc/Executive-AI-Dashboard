@@ -115,7 +115,7 @@ def create_articles_layout():
             dcc.Input(id='period-input', type='number', placeholder='Days (1-30)', value=7, min=1, max=30, className='number-input'),
             html.Span("days", className='input-suffix')
         ], className='input-group'),
-        html.Button('Decode the Discourse', id='analyze-button', className='action-button'),
+        html.Button('Analyze', id='analyze-button', className='action-button'),
         html.Div(id='articles-note', className='analysis-note'),
         dcc.Loading(
             id="articles-loading",
@@ -184,7 +184,7 @@ def create_articles_callbacks(app):
         )
 
         return html.Div([
-            html.H3(f"Analyzed {len(data)} articles on '{term}' for the past {period} days."),
+            html.H3(f"Analyzed  articles on '{term}' for the past {period} days."),
             source_plot,
             sentiment_plot,
             wordcloud_plot,
