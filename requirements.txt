@@ -1,10 +1,6 @@
-streamlit
 matplotlib
-selenium
-# seleniumbase
-webdriver-manager
 pandas
-numpy
+numpy==1.26.4
 plotly
 wordcloud
 nltk
@@ -19,4 +15,5 @@ dash
 dash_bootstrap_components
 openpyxl
 gunicorn
-bs4
+beautifulsoup4
+requests
