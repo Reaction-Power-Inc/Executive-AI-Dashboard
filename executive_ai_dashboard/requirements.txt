@@ -1,0 +1,20 @@
+streamlit
+matplotlib
+selenium
+# seleniumbase
+webdriver-manager
+pandas
+numpy
+plotly
+wordcloud
+nltk
+textblob
+openai
+pytrends
+urllib3==1.26.19
+prophet
+statsmodels
+cmdstanpy==1.1.0
+dash
+dash_bootstrap_components
+openpyxl
