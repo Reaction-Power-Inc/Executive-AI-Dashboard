@@ -281,5 +281,7 @@ app.css.append_css({
     "external_url": "/assets/styles.css"
 })
 
+server = app.server
+
 if __name__ == '__main__':
     app.run_server(debug=True)
