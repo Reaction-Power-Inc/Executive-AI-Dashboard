@@ -8,21 +8,43 @@ from prophet import Prophet
 from prophet.plot import plot_plotly, plot_components_plotly
 import plotly.express as px
 from datetime import datetime, timedelta
+import time
+import random
 import warnings
 warnings.filterwarnings('ignore')
 
 def get_pytrends():
     return TrendReq(hl='en-US', tz=360, timeout=(10, 25), retries=2, backoff_factor=0.1)
 
-def fetch_interest_over_time(_pytrends, search_term, timeframe='today 5-y'):
-    try:
-        _pytrends.build_payload(kw_list=[search_term], timeframe=timeframe)
-        df = _pytrends.interest_over_time()
-        if df.empty:
-            return None
-        return df
-    except Exception as e:
-        return None
+def fetch_interest_over_time(_pytrends, search_term, timeframe='today 5-y', retries=5):
+    for attempt in range(retries):
+        try:
+            # Initialize pytrends with backoff_factor
+            pytrends = TrendReq(hl='en-US', tz=360, timeout=(10,25), retries=2, backoff_factor=0.1)
+            
+            # Add a delay before making the request
+            time.sleep(random.uniform(1, 5))  # Random delay between 1 and 5 seconds
+            
+            # Build payload
+            pytrends.build_payload(kw_list=[search_term], timeframe=timeframe)
+            
+            # Get interest over time
+            data = pytrends.interest_over_time()
+            if data.empty:
+                return None
+
+            return data
+        
+        except Exception as e:
+            print(f"Attempt {attempt + 1} failed: {str(e)}")
+            if attempt < retries - 1:
+                # Calculate exponential backoff wait time
+                wait_time = (2 ** attempt) + random.random()
+                print(f"Waiting for {wait_time:.2f} seconds before retrying...")
+                time.sleep(wait_time)
+            else:
+                print("Max retries reached. Unable to fetch data.")
+                return None
 
 def plot_interest_over_time(df, search_term):
     fig = px.line(df, x=df.index, y=search_term, title=f'{search_term} Interest Over Time')
@@ -73,7 +95,7 @@ def create_forecast_layout():
         html.P("Dive into the world of trending topics and predict their future trajectory.", className='section-description'),
         html.Div([
             html.Label("What's on your mind? Enter a topic to explore:", className='input-label'),
-            dcc.Input(id='search-term', type='text', placeholder='e.g., Artificial Intelligence, Climate Change', value='Artificial Intelligence', className='text-input'),
+            dcc.Input(id='search-term', type='text', placeholder='e.g., Artificial Intelligence, Climate Change', value='', className='text-input'),
         ], className='input-group'),
         html.Div([
             html.Label("How far back should we look?", className='input-label'),
@@ -89,7 +111,7 @@ def create_forecast_layout():
                 className='dropdown-input'
             ),
         ], className='input-group'),
-        html.Button('Unveil the Future', id='forecast-button', className='action-button'),
+        html.Button('Analyze', id='forecast-button', className='action-button'),
         html.Div(id='forecast-note', className='analysis-note'),
         dcc.Loading(
             id="forecast-loading",

@@ -2,6 +2,7 @@ from dash import Dash, html, dcc, callback_context
 import plotly.express as px
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
+import pandas as pd 
 import callbacks
 import process_data
 from forecasting import create_forecast_layout, create_forecast_callbacks
@@ -17,26 +18,33 @@ followers, total_followers, monthly_followers = process_data.preprocess_follower
 top_posts_preview_with_topics = process_data.preprocess_topposts(top_posts_raw)
 
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap'])
-app.title = 'LinkedIn Analytics Dashboard'
+app.title = 'Executive AI Dashboard'
 
 # Define color scheme
 colors = {
-    'primary': '#0077B5',  # LinkedIn blue
-    'secondary': '#00A0DC',
-    'background': '#F3F6F8',
-    'text': '#283E4A',
-    'accent': '#7FC15E'
+    'primary': '#b51a00',
+    'secondary': '#ff6b52',
+    'background': '#ffffff',
+    'text': '#000000',
+    'accent': '#b51a00'
 }
 
 app.layout = dbc.Container([ 
     
     dbc.Row([
-        dbc.Col(html.Img(src='/assets/img/Logo1.png', className='app-logo'), width=2),
-        dbc.Col(html.H1("LinkedIn Analytics Dashboard", className='dashboard-title'), width=10)
-    ], className='header'),
+    dbc.Col(html.Img(src='/assets/img/Logo1.png', className='app-logo'), width=2),
+    dbc.Col([
+        html.H1([
+            html.Span("Executive ", className='dashboard-title-part1'),
+            html.Span("AI Dashboard", className='dashboard-title-part2'),
+            # html.Span("Dashboard", className='dashboard-title-part1')
+        ], className='dashboard-title'),
+        html.Div("Powering Up Your Personal Brand with Data Insights", className='dashboard-subtitle')
+    ], width=10)
+    ], className='header-row', align="center"),
 
     dbc.Tabs([
-        dbc.Tab(label='Overview', tab_id='overview', tabClassName='custom-tab', activeTabClassName='custom-tab-active', children=[
+        dbc.Tab(label='Overview', tab_id='overview', tabClassName='custom-tab', activeTabClassName='custom-tab-active ', children=[
         dbc.Row([
             dbc.Col([
                 html.H4("Select Date Range:", className='date-label'),
@@ -159,14 +167,14 @@ app.layout = dbc.Container([
                 width=12
             )
         ])
-        ]),
-        dbc.Tab(label="Forecasting",  tab_id='forecasting', tabClassName='custom-tab', activeTabClassName='custom-tab-active', children=[
+        ], className='analysis-section'),
+        dbc.Tab(label="Topic Analysis",  tab_id='forecasting', tabClassName='custom-tab', activeTabClassName='custom-tab-active ', children=[
             create_forecast_layout()
         ]),
-        dbc.Tab(label="Articles Analysis", tab_id='articles', tabClassName='custom-tab', activeTabClassName='custom-tab-active', children=[
+        dbc.Tab(label="Articles Analysis", tab_id='articles', tabClassName='custom-tab', activeTabClassName='custom-tab-active ', children=[
             create_articles_layout()
         ])
-    ], id='dashboard-tabs', active_tab='overview', className='custom-tabs'),
+    ], id='dashboard-tabs', active_tab='overview', className='custom-tabs-container'),
     
 ], fluid=True, className='dashboard-container')
 
@@ -236,41 +244,50 @@ def update_optimal_graph(start_date, end_date, selected_variable):
      Input('date-picker-range', 'end_date')]
 )
 def update_top_posts_table(selected_variable, start_date, end_date):
-    filtered_data = top_posts_preview_with_topics[
-        (top_posts_preview_with_topics['Post publish date'] >= start_date) & 
-        (top_posts_preview_with_topics['Post publish date'] <= end_date)
-    ]
-    
-    if selected_variable == 'Top engaging posts':
-        data = filtered_data.sort_values(by='Engagements', ascending=False).head(5)
-    else:
-        data = filtered_data.sort_values(by='Impressions', ascending=False).head(5)
-    
-    table_header = [
-        html.Thead(html.Tr([
-            html.Th("Published on"),
-            html.Th("Posts"),
-            html.Th("Description"),
-            html.Th("Impressions"),
-            html.Th("Reactions"),
-            html.Th("Post Link"),
-            html.Th("Topics")
-        ]))
-    ]
+    try:
+        filtered_data = top_posts_preview_with_topics
+        # filtered_data = top_posts_preview_with_topics[
+        #     (top_posts_preview_with_topics['Post publish date'] >= start_date) & 
+        #     (top_posts_preview_with_topics['Post publish date'] <= end_date)
+        # ]
+        
+        if filtered_data.empty:
+            return html.Div("No data available for the selected date range.", className='no-data-message')
 
-    table_body = [html.Tbody([
-        html.Tr([
-            html.Td(row['Post publish date']),
-            html.Td(html.Img(src=row['Thumbnail'], height=100) if row['Thumbnail'] else "No thumbnail"),
-            html.Td(row['Description']),
-            html.Td(f"{row['Impressions']:,}"),
-            html.Td(f"{row['Engagements']:,}"),
-            html.Td(html.A("View on LinkedIn", href=row['Post URL'], target="_blank")),
-            html.Td(row['Topics'])
-        ]) for _, row in data.iterrows()
-    ])]
+        if selected_variable == 'Top engaging posts':
+            data = filtered_data.sort_values(by='Engagements', ascending=False).head(5)
+        else:
+            data = filtered_data.sort_values(by='Impressions', ascending=False).head(5)
 
-    return dbc.Table(table_header + table_body, bordered=True, hover=True, responsive=True, striped=True, className='top-posts-table')
+        table_header = [
+            html.Thead(html.Tr([
+                html.Th("Published on"),
+                html.Th("Posts"),
+                html.Th("Description"),
+                html.Th("Impressions"),
+                html.Th("Reactions"),
+                html.Th("Post Link"),
+                html.Th("Topics")
+            ]))
+        ]
+
+        table_body = [html.Tbody([
+            html.Tr([
+                html.Td(row['Post publish date']),
+                html.Td(html.Img(src=row['Thumbnail'], height=100) if pd.notna(row['Thumbnail']) else "No thumbnail"),
+                html.Td(row['Description']),
+                html.Td(f"{row['Impressions']:,}"),
+                html.Td(f"{row['Engagements']:,}"),
+                html.Td(html.A("View on LinkedIn", href=row['Post URL'], target="_blank")),
+                html.Td(row['Topics'])
+            ]) for _, row in data.iterrows()
+        ])]
+
+        return dbc.Table(table_header + table_body, bordered=True, hover=True, responsive=True, striped=True, className='top-posts-table')
+
+    except Exception as e:
+        print(f"Error in update_top_posts_table: {str(e)}")  # For debugging
+        return html.Div(f"An error occurred: {str(e)}", className='error-message')
 
 # Create callbacks for forecasting and articles
 create_forecast_callbacks(app)

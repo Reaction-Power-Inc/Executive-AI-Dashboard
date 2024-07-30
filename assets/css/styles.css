@@ -1,11 +1,11 @@
 :root {
-    --primary-color: #0077B5;
-    --secondary-color: #00A0DC;
-    --background-color: #F3F6F8;
-    --text-color: #283E4A;
-    --accent-color: #7FC15E;
-    --negative-color: #E15554;
-    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --primary-color: #b51a00;
+    --secondary-color: #ff6b52;
+    --background-color: #ffffff;
+    --text-color: #333333;
+    --accent-color: #b51a00;
+    --negative-color: #949494;
+    --card-shadow: 0 4px 6px rgba(181, 26, 0, 0.1);
 }
 
 body {
@@ -28,17 +28,65 @@ body {
     
     .metric-card {
         margin-bottom: 20px;
+    
     }
+}
+
+.header-row {
+    background-color: #f8f8f8;
+    border-bottom: 3px solid var(--primary-color);
+    padding: 20px 0;
+    margin-bottom: 30px;
 }
 
 .app-logo {
     max-width: 100px;
+    height: auto;
 }
 
 .dashboard-title {
     font-size: 2.5rem;
     font-weight: 700;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+}
+
+.dashboard-title-part1 {
+    color: #000000;
+}
+
+.dashboard-title-part2 {
     color: var(--primary-color);
+}
+
+.dashboard-title::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+.dashboard-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+    font-weight: 300;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 2rem;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 1rem;
+    }
 }
 
 .date-range-row {
@@ -57,14 +105,14 @@ body {
     font-weight: 600;
     margin-top: 40px;
     margin-bottom: 20px;
-    color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
+    color: var(--text-color);
+    border-bottom: 2px solid var(--negative-color);
     padding-bottom: 10px;
 }
 
 .metric-card {
     padding: 20px;
-    text-align: center;
+    text-align:center;
     box-shadow: var(--card-shadow);
     border: none;
     border-radius: 8px;
@@ -73,8 +121,10 @@ body {
     height: 150px; /* Set a fixed height */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    /* border-left: 1px solid var(--text-color); */
+    color: var(--text-color);
 }
 
 .metric-card:hover {
@@ -91,7 +141,7 @@ body {
 .metric-value {
     font-size: 2rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--text-color);
 }
 
 .percentage-change {
@@ -124,7 +174,7 @@ body {
 }
 
 .top-posts-table th {
-    background-color: #0077B5;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -138,7 +188,7 @@ body {
 }
 
 .top-posts-table thead {
-    background-color: #0077B5;
+    background-color: var(--primary-color);
     color: white;
 }
 
@@ -164,7 +214,7 @@ body {
 }
 
 #forecast-button {
-    background-color: #0077B5;
+    background-color: var(--accent-color);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -173,7 +223,7 @@ body {
 }
 
 #forecast-button:hover {
-    background-color: #005983;
+    background-color: var(--accent-color);
 }
 
 #forecast-output {
@@ -186,7 +236,7 @@ body {
     width: 100%;
 }
 
-#analyze-button {
+/* #analyze-button {
     background-color: #0077B5;
     color: white;
     border: none;
@@ -197,7 +247,7 @@ body {
 
 #analyze-button:hover {
     background-color: #005983;
-}
+} */
 
 #articles-output {
     margin-top: 20px;
@@ -246,9 +296,8 @@ body {
 }
 
 .text-input:focus, .number-input:focus, .dropdown-input:focus {
-    border-color: #0077B5;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 119, 181, 0.2);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(181, 26, 0, 0.2);
 }
 
 .input-suffix {
@@ -257,7 +306,7 @@ body {
 }
 
 .action-button {
-    background-color: #0077B5;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -268,13 +317,13 @@ body {
 }
 
 .action-button:hover {
-    background-color: #005983;
+    background-color: var(--secondary-color);
 }
 
 .analysis-note {
     margin-top: 15px;
     font-style: italic;
-    color: #0077B5;
+    color: var(--accent-color);
 }
 
 .output-container {
@@ -285,7 +334,7 @@ body {
 ._dash-loading-callback {
     font-family: sans-serif;
     padding-top: 50px;
-    color: rgb(90, 90, 90);
+    color: var(--primary-color);
 }
 
 /* Responsive design */
@@ -307,3 +356,89 @@ body {
     }
 }
 
+/* Tab styling */
+/* Override default dbc styles */
+.custom-tabs {
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 30px;
+}
+
+.nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs .nav-link {
+    color: #666;
+    background-color: transparent;
+    border: none;
+    padding: 12px 20px;
+    margin-right: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.nav-tabs .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover::after,
+.nav-tabs .nav-link.active::after {
+    transform: scaleX(1);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: 600;
+    background-color: transparent;
+}
+
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+.custom-tab {
+    color: #333;
+    background-color: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 12px 24px;
+    margin-right: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.custom-tab:hover {
+    color: var(--primary-color);
+    background-color: rgba(181, 26, 0, 0.05);
+}
+
+.custom-tab-active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .custom-tab {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}

@@ -104,16 +104,16 @@ def get_bigrams(texts, n=10):
 
 def create_articles_layout():
     return html.Div([
-        html.H2("Article Insight Generator", className='section-title'),
+        html.H2("Article Analysis", className='section-title'),
         html.P("Uncover patterns and sentiments in recent publications.", className='section-description'),
         html.Div([
-            html.Label("What topic intrigues you today?", className='input-label'),
-            dcc.Input(id='keyword-input', type='text', placeholder='e.g., Renewable Energy, Space Exploration', value='Artificial Intelligence', className='text-input'),
+            html.Label("What's on your mind? Enter a topic to explore:", className='input-label'),
+            dcc.Input(id='keyword-input', type='text', placeholder='e.g., Sustainability, US Elections', value='', className='text-input'),
         ], className='input-group'),
         html.Div([
             html.Label("How recent should our analysis be?", className='input-label'),
-            dcc.Input(id='period-input', type='number', placeholder='Days (1-30)', value=7, min=1, max=30, className='number-input'),
-            html.Span("days", className='input-suffix')
+            dcc.Input(id='period-input', type='number', placeholder='Days (1-30)', value=14, min=1, max=30, className='number-input'),
+            html.Span("max 30 days", className='input-suffix')
         ], className='input-group'),
         html.Button('Analyze', id='analyze-button', className='action-button'),
         html.Div(id='articles-note', className='analysis-note'),
@@ -156,7 +156,8 @@ def create_articles_callbacks(app):
         source_plot = dcc.Graph(
             figure=px.bar(source_counts, x=source_counts.index, y=source_counts.values, 
                           labels={'y': 'Count', 'index': 'Source'},
-                          title='Top 10 Sources by Article Count')
+                          title='Top 10 Sources by Article Count',
+                          color_discrete_sequence=['#b51a00'])
         )
 
         sentiment_counts = data['sentiment'].value_counts()
@@ -173,14 +174,16 @@ def create_articles_callbacks(app):
         word_freq_plot = dcc.Graph(
             figure=px.bar(x=[w[0] for w in word_freq], y=[w[1] for w in word_freq],
                           labels={'x': 'Word', 'y': 'Frequency'},
-                          title='Top 10 Most Frequent Words')
+                          title='Top 10 Most Frequent Words',
+                          color_discrete_sequence=['#b51a00'])
         )
 
         bigrams = get_bigrams(data['descriptions'].dropna())
         bigram_plot = dcc.Graph(
             figure=px.bar(x=[' '.join(b[0]) for b in bigrams], y=[b[1] for b in bigrams],
                           labels={'x': 'Bigram', 'y': 'Frequency'},
-                          title='Top 10 Most Frequent Bigrams')
+                          title='Top 10 Most Frequent Bigrams',
+                          color_discrete_sequence=['#b51a00'])
         )
 
         return html.Div([
