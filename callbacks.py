@@ -256,7 +256,7 @@ def update_optimal_graph(start_date, end_date, selected_variable):
         fig = px.bar(engagements_by_day, x='DayOfWeek', y='Engagements', 
                      title='Engagement Distribution by Day of Week',
                      labels={'Engagements': 'Total Engagements', 'DayOfWeek': 'Day of Week'},
-                     color='Engagements', color_continuous_scale='Reds')
+                     color='Engagements', color_continuous_scale='Greys')
         insight = html.Div([
             html.Strong("Optimal Posting Day for Engagement"),
             html.P(f"{optimal_day} is your best day for engagement, with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Engagements'].values[0]:,} total engagements."),
@@ -268,7 +268,7 @@ def update_optimal_graph(start_date, end_date, selected_variable):
         fig = px.bar(engagements_by_day, x='DayOfWeek', y='Impressions', 
                      title='Impression Distribution by Day of Week',
                      labels={'Impressions': 'Total Impressions', 'DayOfWeek': 'Day of Week'},
-                     color='Impressions', color_continuous_scale='Reds')
+                     color='Impressions', color_continuous_scale='Greys')
         insight = html.Div([
             html.Strong("Optimal Posting Day for Reach"),
             html.P(f"To maximize your reach, consider posting on {optimal_day}s, which historically yield {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Impressions'].values[0]:,} impressions."),
@@ -280,7 +280,7 @@ def update_optimal_graph(start_date, end_date, selected_variable):
         fig = px.bar(engagements_by_day, x='DayOfWeek', y='EngagementRate', 
                      title='Engagement Rate by Day of Week',
                      labels={'EngagementRate': 'Engagement Rate (%)', 'DayOfWeek': 'Day of Week'},
-                     color='EngagementRate', color_continuous_scale='Reds')
+                     color='EngagementRate', color_continuous_scale='Greys')
         insight = html.Div([
             html.Strong("Optimal Posting Day for Engagement Rate"),
             html.P(f"For the highest engagement rate, {optimal_day} stands out with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'EngagementRate'].values[0]:.2f}%."),
