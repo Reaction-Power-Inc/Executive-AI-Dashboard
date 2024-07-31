@@ -112,7 +112,7 @@ app.layout = dbc.Container([
         ]),
         
         dbc.Row([
-            dbc.Col(html.H2("Engagement Analysis", className='section-title'), width=12)
+            dbc.Col(html.H2("Trend Analysis", className='section-title'), width=12)
         ]),
         
         dbc.Row([
@@ -134,8 +134,8 @@ app.layout = dbc.Container([
         dbc.Row([
             dbc.Col([
                 html.Div([
-                    html.H3('What is the best day of week to post?', className='optimal-day-title'),
-                    html.Div(id='best-day', className='optimal-day-value'),
+                    # html.H3('What is the best day of week to post?', className='optimal-day-title'),
+                    # html.Div(id='best-day', className='optimal-day-value'),
                     html.Div(id='optimal-days', className='optimal-day-description')
                 ], className='optimal-day-container')
             ], width=3),
@@ -228,7 +228,7 @@ def update_engagements_graph(start_date, end_date, selected_variable):
 
 @app.callback(
     Output('optimal-graph', 'figure'),
-    Output('best-day', 'children'),
+    # Output('best-day', 'children'),
     Output('optimal-days', 'children'),
     [Input('date-picker-range', 'start_date'),
      Input('date-picker-range', 'end_date'),
@@ -261,13 +261,13 @@ def update_top_posts_table(selected_variable, start_date, end_date):
 
         table_header = [
             html.Thead(html.Tr([
-                html.Th("Published on"),
-                html.Th("Posts"),
-                html.Th("Description"),
+                html.Th("Date Published"),
+                html.Th("Thumbnail"),
+                html.Th("Post"),
                 html.Th("Impressions"),
-                html.Th("Reactions"),
+                html.Th("Engagements"),
                 html.Th("Post Link"),
-                html.Th("Topics")
+                html.Th("Themes")
             ]))
         ]
 

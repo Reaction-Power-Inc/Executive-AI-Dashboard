@@ -170,44 +170,21 @@ def update_engagements_graph(start_date, end_date, selected_variable):
     # Calculate overall trend
     filtered_data['Trend'] = filtered_data[selected_variable].rolling(window=len(filtered_data), center=True).mean()
     
-    # Create subplot with two rows
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True, 
-                        vertical_spacing=0.1, 
-                        subplot_titles=(f'{selected_variable} Over Time', 'Daily Change'))
+    # Create the main graph
+    fig = go.Figure()
 
     # Add traces for main graph
     fig.add_trace(go.Scatter(x=filtered_data['Date'], y=filtered_data[selected_variable],
                              mode='lines', name=selected_variable,
-                             line=dict(color='#b51a00', width=2)), row=1, col=1)
+                             line=dict(color='#b51a00', width=2)))
     
     fig.add_trace(go.Scatter(x=filtered_data['Date'], y=filtered_data[f'{selected_variable}_Rolling_Avg'],
                              mode='lines', name=f'{window}-Day Rolling Average',
-                             line=dict(color='#ff6b52', width=2, dash='dash')), row=1, col=1)
+                             line=dict(color='#ff6b52', width=2, dash='dash')))
     
     fig.add_trace(go.Scatter(x=filtered_data['Date'], y=filtered_data['Trend'],
                              mode='lines', name='Overall Trend',
-                             line=dict(color='#333333', width=2, dash='dot')), row=1, col=1)
-
-    # Calculate and add daily change
-    daily_change = filtered_data[selected_variable].diff()
-    fig.add_trace(go.Bar(x=filtered_data['Date'], y=daily_change,
-                         name='Daily Change', marker_color='#b51a00'), row=2, col=1)
-
-    # Update layout
-    fig.update_layout(
-        height=800,  # Increase height to accommodate two graphs
-        title_text=f"{selected_variable} Analysis",
-        showlegend=True,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        plot_bgcolor='white',
-        paper_bgcolor='white',
-        font=dict(family="Arial, sans-serif", size=12, color="#333"),
-        margin=dict(l=40, r=40, t=60, b=40),
-    )
-
-    fig.update_xaxes(title_text="Date", row=2, col=1)
-    fig.update_yaxes(title_text=selected_variable, row=1, col=1)
-    fig.update_yaxes(title_text="Daily Change", row=2, col=1)
+                             line=dict(color='#333333', width=2, dash='dot')))
 
     # Calculate insights
     total_value = filtered_data[selected_variable].sum()
@@ -217,24 +194,56 @@ def update_engagements_graph(start_date, end_date, selected_variable):
     min_value = filtered_data[selected_variable].min()
     min_date = filtered_data.loc[filtered_data[selected_variable].idxmin(), 'Date']
     
-    # Add annotations with insights
-    insights = f"""
-    Total {selected_variable}: {total_value:,.0f}
-    Average Daily {selected_variable}: {avg_value:,.0f}
-    Highest {selected_variable}: {max_value:,.0f} on {max_date.strftime('%Y-%m-%d')}
-    Lowest {selected_variable}: {min_value:,.0f} on {min_date.strftime('%Y-%m-%d')}
-    """
-    
-    fig.add_annotation(
-        xref="paper", yref="paper",
-        x=0.01, y=0.97,
-        text=insights,
-        showarrow=False,
-        font=dict(size=10),
-        align="left",
-        bgcolor="rgba(255,255,255,0.8)",
-        bordercolor="black",
-        borderwidth=1,
+    # Create insights text
+    insights_text = (
+        f"<b>Key Insights:</b><br><br>"
+        f"• Total {selected_variable}:<br>   <b>{total_value:,.0f}</b><br><br>"
+        f"• Average Daily {selected_variable}:<br>   <b>{avg_value:,.0f}</b><br><br>"
+        f"• Highest {selected_variable}:<br>   <b>{max_value:,.0f}</b><br>   on {max_date.strftime('%Y-%m-%d')}<br><br>"
+        f"• Lowest {selected_variable}:<br>   <b>{min_value:,.0f}</b><br>   on {min_date.strftime('%Y-%m-%d')}"
+    )
+
+    # Update layout
+    fig.update_layout(
+        height=600,
+        title=dict(
+            text=f"{selected_variable} Analysis",
+            font=dict(size=24, color='#333333'),
+            x=0.5,
+            y=0.95
+        ),
+        showlegend=True,
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        font=dict(family="Arial, sans-serif", size=12, color="#333"),
+        margin=dict(l=40, r=40, t=80, b=40),
+        xaxis=dict(
+            title="Date",
+            showgrid=True,
+            gridcolor='#e0e0e0'
+        ),
+        yaxis=dict(
+            title=selected_variable,
+            showgrid=True,
+            gridcolor='#e0e0e0'
+        ),
+        annotations=[
+            dict(
+                x=0.01,
+                y=0.98,
+                xref="paper",
+                yref="paper",
+                text=insights_text,
+                showarrow=False,
+                font=dict(size=12),
+                align="left",
+                bgcolor="rgba(255,255,255,0.8)",
+                bordercolor="#333333",
+                borderwidth=1,
+                borderpad=10,
+            )
+        ]
     )
 
     return fig
@@ -257,10 +266,15 @@ def update_optimal_graph(start_date, end_date, selected_variable):
                      title='Engagement Distribution by Day of Week',
                      labels={'Engagements': 'Total Engagements', 'DayOfWeek': 'Day of Week'},
                      color='Engagements', color_continuous_scale='Greys')
+        # insight = html.Div([
+        #     html.Strong("Optimal Posting Day for Engagement"),
+        #     html.P(f"{optimal_day} is your best day for engagement, with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Engagements'].values[0]:,} total engagements."),
+        #     html.P(f"{second_best} is your second-best option, providing additional opportunities for high engagement.")
+        # ])
         insight = html.Div([
             html.Strong("Optimal Posting Day for Engagement"),
-            html.P(f"{optimal_day} is your best day for engagement, with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Engagements'].values[0]:,} total engagements."),
-            html.P(f"{second_best} is your second-best option, providing additional opportunities for high engagement.")
+            # html.P(f"{optimal_day} is your best day for engagement, with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Engagements'].values[0]:,} total engagements."),
+            html.P(f"{optimal_day} and {second_best}  have been your optimal days for highest engagements")
         ])
     elif selected_variable == 'Impressions':
         optimal_day = engagements_by_day.loc[engagements_by_day['Impressions'].idxmax(), 'DayOfWeek']
@@ -271,8 +285,8 @@ def update_optimal_graph(start_date, end_date, selected_variable):
                      color='Impressions', color_continuous_scale='Greys')
         insight = html.Div([
             html.Strong("Optimal Posting Day for Reach"),
-            html.P(f"To maximize your reach, consider posting on {optimal_day}s, which historically yield {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Impressions'].values[0]:,} impressions."),
-            html.P(f"{second_best} is also a strong contender for high visibility.")
+            # html.P(f"To maximize your reach, consider posting on {optimal_day}s, which historically yield {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'Impressions'].values[0]:,} impressions."),
+            html.P(f"{optimal_day} and{second_best} have been your optimal days for high visibility.")
         ])
     else:  # EngagementRate
         optimal_day = engagements_by_day.loc[engagements_by_day['EngagementRate'].idxmax(), 'DayOfWeek']
@@ -283,8 +297,8 @@ def update_optimal_graph(start_date, end_date, selected_variable):
                      color='EngagementRate', color_continuous_scale='Greys')
         insight = html.Div([
             html.Strong("Optimal Posting Day for Engagement Rate"),
-            html.P(f"For the highest engagement rate, {optimal_day} stands out with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'EngagementRate'].values[0]:.2f}%."),
-            html.P(f"{second_best} follows closely, offering another opportunity for high-quality interactions.")
+            # html.P(f"For the highest engagement rate, {optimal_day} stands out with {engagements_by_day.loc[engagements_by_day['DayOfWeek'] == optimal_day, 'EngagementRate'].values[0]:.2f}%."),
+            html.P(f"{optimal_day} and {second_best} have been your optimal days for high-quality interactions.")
         ])
 
     fig.update_layout(
@@ -297,7 +311,9 @@ def update_optimal_graph(start_date, end_date, selected_variable):
     )
     fig.update_xaxes(tickangle=45)
 
-    return fig, f"Best day: {optimal_day}", insight
+    # return fig, f"Best day: {optimal_day}", insight
+    return fig, insight
+
 
 def get_table_children(start_date, end_date, selected_variable):
     filtered_data = top_posts_preview_with_topics[(top_posts_preview_with_topics['Post publish date'] >= start_date) & (top_posts_preview_with_topics['Post publish date'] <= end_date)]
